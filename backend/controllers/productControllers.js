@@ -11,6 +11,8 @@ export const getProducts = catchAsyncErrors (async(req, res) => {
   const apiFilters = new APIFilters(Product, parsedQuery).search().filters();
 
 
+
+
   let products = await apiFilters.query;
   let filteredProductsCount = products.length;
 
@@ -26,10 +28,12 @@ export const getProducts = catchAsyncErrors (async(req, res) => {
 
 // Create new product => /api
 export const newProduct = catchAsyncErrors (async(req, res) => {
-    const product = await Product.create(req.body)
-    res.status(200).json({
-        product,
-    });
+  req.body.user = req.user._id;
+
+  const product = await Product.create(req.body)
+  res.status(200).json({
+      product,
+  });
 });
 
 //Get single product
