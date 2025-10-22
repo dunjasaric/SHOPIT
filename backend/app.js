@@ -20,6 +20,9 @@ connectDatabase();
 app.use(express.json());
 app.use(cookieParser());
 
+import qs from "qs";
+app.set("query parser", (str) => qs.parse(str));
+
 // Import all routes
 import productRoutes from "./routes/products.js";
 import authRoutes from "./routes/auth.js";
