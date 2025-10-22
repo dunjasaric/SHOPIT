@@ -76,7 +76,7 @@ export const forgotPassword = catchAsyncErrors (async(req, res, next) => {
 
     //create reset password url
 
-    const resetUrl = `${process.env.FRONTEND_URL}/api/v1/password/reset/${resetToken}`;
+    const resetUrl = `${process.env.FRONTEND_URL}/password/reset/${resetToken}`;
 
     const message = getResetPasswordTemplate(user?.name, resetUrl);
 
