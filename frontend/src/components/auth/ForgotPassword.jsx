@@ -3,6 +3,7 @@ import { useForgotPasswordMutation } from "../../redux/api/userApi";
 import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import MetaData from "../layout/MetaData";
 
 const ForgotPassword = () => {
 
@@ -34,9 +35,11 @@ const ForgotPassword = () => {
       };
 
     return (
-         <div className="row wrapper">
-      <div className="col-10 col-lg-5">
-        <form
+      <>
+      <MetaData title={"Forgot Password"}/>
+      <div className="row wrapper">
+        <div className="col-10 col-lg-5">
+          <form
           className="shadow rounded bg-body"
           onSubmit={submitHandler}
         >
@@ -64,6 +67,7 @@ const ForgotPassword = () => {
         </form>
       </div>
     </div>
+    </>
     )
 };
 
