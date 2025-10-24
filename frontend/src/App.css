@@ -164,11 +164,11 @@ footer {
 }
 
 .redColor {
-  color: red;
+  color: red !important;
 }
 
 .greenColor {
-  color: green;
+  color: green !important;
 }
 
 #product_image {
@@ -562,4 +562,20 @@ footer {
   border-color: #f3f4f6;
   border-radius: 0.3rem;
   color: #fa9c23;
+}
+
+
+
+.page-link .visually-hidden,
+.page-link .sr-only {
+  display: none !important;
+}
+
+
+
+.my-orders-table table td:nth-last-child(1),
+.my-orders-table table th:nth-last-child(1) {
+  width: 90px !important;  
+  text-align: center !important;
+  white-space: nowrap;
 }
