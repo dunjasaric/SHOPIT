@@ -4,7 +4,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 export const productApi = createApi({
   reducerPath: "productApi",
   baseQuery: fetchBaseQuery({ baseUrl: "/api/v1" }),
-  tagTypes: ["Product", "AdminProducts"],
+  tagTypes: ["Product", "AdminProducts", "Reviews"],
   endpoints: (builder) => ({
     getProducts: builder.query({
       query: (params) => ({
@@ -89,6 +89,19 @@ export const productApi = createApi({
       },
       invalidatesTags: ["AdminProducts"],
     }),
+    getProductReviews: builder.query({
+      query: (productId) => `/reviews?id=${productId}`,
+      providesTags: ["Reviews"],
+    }),
+     deleteReview: builder.mutation({
+      query({ productId, id }) {
+        return {
+          url: `/admin/reviews?productId=${productId}&id=${id}`,
+          method: "DELETE",
+        };
+      },
+      invalidatesTags: ["Reviews"],
+    }),
   }),
 });
 
@@ -103,4 +116,6 @@ export const {
   useUploadProductImagesMutation,
   useDeleteProductImageMutation,
   useDeleteProductMutation,
+  useLazyGetProductReviewsQuery,
+  useDeleteReviewMutation,
 } = productApi;

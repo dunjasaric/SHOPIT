@@ -579,3 +579,12 @@ footer {
   text-align: center !important;
   white-space: nowrap;
 }
+
+.order-details img {
+  display: block;
+  width: 65px !important;
+  height: 45px !important;
+  object-fit: contain;
+  border: 1px solid #ddd;
+  background: #fff;
+}

@@ -37,9 +37,6 @@ const OrderDetails = () => {
         <div className="col-12 col-lg-9 mt-5 order-details">
           <div className="d-flex justify-content-between align-items-center">
             <h3 className="mt-5 mb-4">Your Order Details</h3>
-            <a className="btn btn-success" href="/invoice/order/order-id">
-              <i className="fa fa-print"></i> Invoice
-            </a>
           </div>
           <table className="table table-striped table-bordered">
             <tbody>
