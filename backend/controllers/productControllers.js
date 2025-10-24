@@ -3,9 +3,13 @@ import Product from "../models/product.js";
 import Order from "../models/order.js";
 import APIFilters from "../utils/apiFilters.js";
 import ErrorHandler from "../utils/errorHandler.js";
+import { upload_file } from "../utils/cloudinary.js";
+import { delete_file } from "../utils/cloudinary.js";
 
 
-// Get all products   =>  /api/v1/products
+
+
+
 export const getProducts = catchAsyncErrors(async (req, res, next) => {
   const resPerPage = 4;
   const apiFilters = new APIFilters(Product, req.query).search().filters();
@@ -24,7 +28,7 @@ export const getProducts = catchAsyncErrors(async (req, res, next) => {
   });
 });
 
-// Create new Product   =>  /api/v1/admin/products
+
 export const newProduct = catchAsyncErrors(async (req, res, next) => {
   req.body.user = req.user._id;
 
@@ -35,7 +39,7 @@ export const newProduct = catchAsyncErrors(async (req, res, next) => {
   });
 });
 
-// Get single product details   =>  /api/v1/products/:id
+
 export const getProductDetails = catchAsyncErrors(async (req, res, next) => {
   const product = await Product.findById(req?.params?.id).populate("reviews.user");;
 
@@ -48,7 +52,16 @@ export const getProductDetails = catchAsyncErrors(async (req, res, next) => {
   });
 });
 
-// Update product details   =>  /api/v1/products/:id
+
+export const getAdminProducts = catchAsyncErrors(async (req, res, next) => {
+  const products = await Product.find();
+
+  res.status(200).json({
+    products,
+  });
+});
+
+
 export const updateProduct = catchAsyncErrors(async (req, res, next) => {
   let product = await Product.findById(req?.params?.id);
 
@@ -65,12 +78,58 @@ export const updateProduct = catchAsyncErrors(async (req, res, next) => {
   });
 });
 
-// Delete product   =>  /api/v1/products/:id
+export const uploadProductImages = catchAsyncErrors(async (req, res) => {
+  let product = await Product.findById(req?.params?.id);
+
+  if (!product) {
+    return next(new ErrorHandler("Product not found", 404));
+  }
+
+  const uploader = async (image) => upload_file(image, "shopit/products");
+
+  const urls = await Promise.all((req?.body?.images).map(uploader));
+
+  product?.images?.push(...urls);
+  await product?.save();
+
+  res.status(200).json({
+    product,
+  });
+});
+
+export const deleteProductImage = catchAsyncErrors(async (req, res) => {
+  let product = await Product.findById(req?.params?.id);
+
+  if (!product) {
+    return next(new ErrorHandler("Product not found", 404));
+  }
+
+  const isDeleted = await delete_file(req.body.imgId);
+
+  if (isDeleted) {
+    product.images = product?.images?.filter(
+      (img) => img.public_id !== req.body.imgId
+    );
+
+    await product?.save();
+  }
+
+  res.status(200).json({
+    product,
+  });
+});
+
+
+
 export const deleteProduct = catchAsyncErrors(async (req, res, next) => {
   const product = await Product.findById(req?.params?.id);
 
   if (!product) {
     return next(new ErrorHandler("Product not found", 404));
+  }
+
+  for (let i = 0; i < product?.images?.length; i++) {
+    await delete_file(product?.images[i].public_id);
   }
 
   await product.deleteOne();
@@ -81,7 +140,6 @@ export const deleteProduct = catchAsyncErrors(async (req, res, next) => {
 });
 
 
-// Create/Update product review  =>  /api/v1/reviews
 export const createProductReview = catchAsyncErrors(async (req, res, next) => {
 
   const { rating, comment, productId } = req.body;
@@ -127,7 +185,7 @@ export const createProductReview = catchAsyncErrors(async (req, res, next) => {
 
 
 
-// Get product reviews  =>  /api/v1/reviews
+
 export const getProductReviews = catchAsyncErrors(async (req, res, next) => {
   const product = await Product.findById(req.query.id);
 
@@ -141,7 +199,7 @@ export const getProductReviews = catchAsyncErrors(async (req, res, next) => {
 })
 
 
-// Delete product review   =>  /api/v1/admin/reviews
+
 export const deleteReview = catchAsyncErrors(async (req, res, next) => {
   let product = await Product.findById(req.query.productId);
 
@@ -173,7 +231,7 @@ export const deleteReview = catchAsyncErrors(async (req, res, next) => {
   });
 });
 
-// Can User Review   =>  /api/v1/can_review
+
 export const canUserReview = catchAsyncErrors(async (req, res, next) => {
 
   const orders = await Order.find({
